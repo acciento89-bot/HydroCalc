@@ -4,6 +4,13 @@ struct ProPaywallView: View {
     @EnvironmentObject private var proStore: ProStore
     @Environment(\.dismiss) private var dismiss
 
+    private var purchaseTitle: String {
+        if let product = proStore.product {
+            return String(format: String(localized: "pro.buy.price"), product.displayPrice)
+        }
+        return String(localized: "pro.buy")
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -20,7 +27,7 @@ struct ProPaywallView: View {
                     }
 
                     VStack(spacing: 12) {
-                        feature("pipe.and.drop.fill", "pro.feature.pipe")
+                        feature("drop.circle.fill", "pro.feature.pipe")
                         feature("slider.horizontal.3", "pro.feature.kv")
                         feature("lock.open.fill", "pro.feature.once")
                     }
@@ -31,7 +38,7 @@ struct ProPaywallView: View {
                     } label: {
                         HStack {
                             if proStore.isLoading { ProgressView().tint(.white) }
-                            Text(proStore.product?.displayPrice.map { String(format: String(localized: "pro.buy.price"), $0) } ?? String(localized: "pro.buy"))
+                            Text(purchaseTitle)
                                 .font(.headline)
                         }
                         .frame(maxWidth: .infinity)
