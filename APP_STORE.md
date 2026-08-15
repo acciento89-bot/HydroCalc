@@ -17,7 +17,7 @@
 Hydraulik-Rechner für SHK
 
 ### Promotional text
-Volumenstrom, Spreizung, Rohrgeschwindigkeit, Druck und Kv schnell auf iPhone und iPad berechnen.
+Volumenstrom, Spreizung, Strömungsgeschwindigkeit, Druck und Kv schnell auf iPhone und iPad berechnen.
 
 ### Description
 HydroCalc ist eine kompakte Rechenhilfe für Heizungs-, SHK- und Servicetechniker.
@@ -30,7 +30,7 @@ Funktionen:
 - Offline nutzbar
 
 HydroCalc Pro schaltet zusätzliche Hydraulik-Rechner dauerhaft mit einem einmaligen In-App-Kauf frei:
-- Rohrgeschwindigkeit aus Volumenstrom und Innendurchmesser
+- Strömungsgeschwindigkeit aus Volumenstrom und Innendurchmesser
 - Erforderlicher Innendurchmesser aus Volumenstrom und Zielgeschwindigkeit
 - Kv-Wert aus Volumenstrom und Differenzdruck
 - Differenzdruck aus Volumenstrom und Kv-Wert
@@ -39,7 +39,7 @@ Wichtiger Hinweis:
 HydroCalc ist eine Rechenhilfe für fachkundige Anwender. Herstellerangaben, geltende Normen, Anlagenplanung und reale Messwerte haben immer Vorrang.
 
 ### Keywords
-SHK,Heizung,Hydraulik,Volumenstrom,Spreizung,Rohr,Kv,Druck,Techniker,Monteur
+SHK,Heizung,Hydraulik,Volumenstrom,Spreizung,Strömung,Kv,Druck,Techniker,Monteur
 
 ## English
 
@@ -47,7 +47,7 @@ SHK,Heizung,Hydraulik,Volumenstrom,Spreizung,Rohr,Kv,Druck,Techniker,Monteur
 Hydronic calculator for HVAC
 
 ### Promotional text
-Calculate hydronic flow, delta T, pipe velocity, pressure and Kv quickly on iPhone and iPad.
+Calculate hydronic flow, delta T, flow velocity, pressure and Kv quickly on iPhone and iPad.
 
 ### Description
 HydroCalc is a compact calculation aid for heating, HVAC and service technicians.
@@ -60,7 +60,7 @@ Features:
 - Works offline
 
 HydroCalc Pro permanently unlocks additional hydronic calculators with a one-time In-App Purchase:
-- Pipe velocity from flow and inside diameter
+- Flow velocity from flow and inside diameter
 - Required inside diameter from flow and target velocity
 - Kv value from flow and differential pressure
 - Differential pressure from flow and Kv
@@ -84,6 +84,6 @@ No account, no ads, no analytics, no tracking and no Kamilunavo backend for calc
 
 HydroCalc is an offline hydronic calculation utility for trained heating/HVAC professionals. No account or login is required. The flow/power/delta-T calculator and pressure converter are available immediately.
 
-HydroCalc Pro is a one-time non-consumable In-App Purchase that unlocks pipe velocity/diameter and Kv/differential-pressure calculations.
+HydroCalc Pro is a one-time non-consumable In-App Purchase that unlocks flow-velocity/diameter and Kv/differential-pressure calculations.
 
 Product ID: `de.kamilunavo.hydrocalc.pro`.
