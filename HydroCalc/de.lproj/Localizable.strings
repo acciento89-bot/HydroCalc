@@ -1,0 +1,85 @@
+"home.eyebrow" = "Kamilunavo SHK Tool";
+"home.title" = "Hydraulik schnell berechnen";
+"home.subtitle" = "Volumenstrom, Spreizung, Rohrgeschwindigkeit und Kv direkt auf der Baustelle.";
+"home.flow.title" = "Volumenstrom & Leistung";
+"home.flow.text" = "Leistung, Volumenstrom oder Spreizung aus den jeweils anderen beiden Werten berechnen.";
+"home.pressure.title" = "Druck umrechnen";
+"home.pressure.text" = "bar, kPa, mbar, mWS und psi schnell ineinander umrechnen.";
+"home.pipe.title" = "Rohrgeschwindigkeit";
+"home.pipe.text" = "Strömungsgeschwindigkeit aus Volumenstrom und Innendurchmesser oder erforderlichen Innendurchmesser bestimmen.";
+"home.kv.title" = "Kv-Rechner";
+"home.kv.text" = "Kv-Wert oder Differenzdruck aus Volumenstrom und Ventilwert berechnen.";
+
+"flow.title" = "Volumenstrom";
+"flow.solve.title" = "Gesuchten Wert wählen";
+"flow.solve.flow" = "Volumenstrom";
+"flow.solve.power" = "Leistung";
+"flow.solve.deltaT" = "Spreizung";
+"flow.power" = "Leistung";
+"flow.flow" = "Volumenstrom";
+"flow.deltaT" = "Spreizung";
+"flow.m3h" = "Volumenstrom";
+"flow.lmin" = "Volumenstrom";
+"flow.presets" = "Schnellwahl";
+"flow.note" = "Berechnung für Wasser mit dem praxisüblichen Faktor 1,163 Wh/(l·K). Bei Glykolgemischen oder anderen Medien sind Stoffwerte und Herstellerangaben zu berücksichtigen.";
+
+"pipe.title" = "Rohrgeschwindigkeit";
+"pipe.mode.title" = "Berechnung";
+"pipe.mode.velocity" = "Geschwindigkeit";
+"pipe.mode.diameter" = "Durchmesser";
+"pipe.flow" = "Volumenstrom";
+"pipe.innerDiameter" = "Innendurchmesser";
+"pipe.targetVelocity" = "Zielgeschwindigkeit";
+"pipe.velocity" = "Geschwindigkeit";
+"pipe.requiredDiameter" = "Erforderlicher Innen-Ø";
+"pipe.area" = "Querschnitt";
+"pipe.note" = "Das Ergebnis ist eine geometrische Rechenhilfe. Werkstoff, Rohrrauheit, Druckverlust, Armaturen, Geräuschgrenzen und die konkrete Anlagenplanung sind separat zu prüfen.";
+
+"kv.title" = "Kv-Rechner";
+"kv.mode.title" = "Berechnung";
+"kv.mode.kv" = "Kv-Wert";
+"kv.mode.pressure" = "Differenzdruck";
+"kv.flow" = "Volumenstrom";
+"kv.pressure" = "Differenzdruck";
+"kv.value" = "Kv-Wert";
+"kv.note" = "Kv-Berechnung für Wasser nach der üblichen Beziehung Q = Kv · √Δp. Herstellerkennlinien und reale Betriebsbedingungen haben Vorrang.";
+
+"pressure.title" = "Druck umrechnen";
+"pressure.source" = "Ausgangseinheit";
+"pressure.value" = "Wert";
+"pressure.bar" = "Druck";
+"pressure.kpa" = "Druck";
+"pressure.mbar" = "Druck";
+"pressure.mws" = "Druckhöhe";
+"pressure.psi" = "Druck";
+"pressure.note" = "mWS ist als Meter Wassersäule bei Standardbedingungen zu verstehen und dient hier als praktische Einheitumrechnung.";
+
+"pro.title" = "HydroCalc Pro";
+"pro.subtitle" = "Die erweiterten Hydraulik-Rechner dauerhaft freischalten.";
+"pro.feature.pipe" = "Rohrgeschwindigkeit und erforderlichen Innendurchmesser berechnen";
+"pro.feature.kv" = "Kv-Wert und Differenzdruck berechnen";
+"pro.feature.once" = "Einmal kaufen – dauerhaft freigeschaltet";
+"pro.buy" = "HydroCalc Pro kaufen";
+"pro.buy.price" = "HydroCalc Pro kaufen – %@";
+"pro.restore" = "Käufe wiederherstellen";
+"pro.note" = "Einmaliger In-App-Kauf. Kein Abo.";
+
+"settings.title" = "Einstellungen";
+"settings.language" = "Sprache";
+"settings.language.system" = "System";
+"settings.pro" = "HydroCalc Pro";
+"settings.status" = "Status";
+"settings.pro.active" = "Freigeschaltet";
+"settings.pro.free" = "Kostenlos";
+"settings.links" = "Links";
+"settings.support" = "Support";
+"settings.privacy" = "Datenschutz";
+"settings.about" = "Über HydroCalc";
+"settings.version" = "Version";
+"settings.developer" = "Entwickler";
+
+"common.result" = "Ergebnis";
+"common.invalid" = "Bitte gültige Werte größer als 0 eingeben.";
+"common.done" = "Fertig";
+"common.close" = "Schließen";
+"common.disclaimer" = "HydroCalc ist eine Rechenhilfe für fachkundige Anwender. Herstellerangaben, geltende Normen, Anlagenplanung und reale Messwerte haben immer Vorrang.";
