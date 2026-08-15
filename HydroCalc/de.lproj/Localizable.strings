@@ -1,11 +1,11 @@
 "home.eyebrow" = "Kamilunavo SHK Tool";
 "home.title" = "Hydraulik schnell berechnen";
-"home.subtitle" = "Volumenstrom, Spreizung, Rohrgeschwindigkeit und Kv direkt auf der Baustelle.";
+"home.subtitle" = "Volumenstrom, Spreizung, Strömungsgeschwindigkeit und Kv direkt auf der Baustelle.";
 "home.flow.title" = "Volumenstrom & Leistung";
 "home.flow.text" = "Leistung, Volumenstrom oder Spreizung aus den jeweils anderen beiden Werten berechnen.";
 "home.pressure.title" = "Druck umrechnen";
 "home.pressure.text" = "bar, kPa, mbar, mWS und psi schnell ineinander umrechnen.";
-"home.pipe.title" = "Rohrgeschwindigkeit";
+"home.pipe.title" = "Strömungsgeschwindigkeit";
 "home.pipe.text" = "Strömungsgeschwindigkeit aus Volumenstrom und Innendurchmesser oder erforderlichen Innendurchmesser bestimmen.";
 "home.kv.title" = "Kv-Rechner";
 "home.kv.text" = "Kv-Wert oder Differenzdruck aus Volumenstrom und Ventilwert berechnen.";
@@ -23,7 +23,7 @@
 "flow.presets" = "Schnellwahl";
 "flow.note" = "Berechnung für Wasser mit dem praxisüblichen Faktor 1,163 Wh/(l·K). Bei Glykolgemischen oder anderen Medien sind Stoffwerte und Herstellerangaben zu berücksichtigen.";
 
-"pipe.title" = "Rohrgeschwindigkeit";
+"pipe.title" = "Strömungsgeschwindigkeit";
 "pipe.mode.title" = "Berechnung";
 "pipe.mode.velocity" = "Geschwindigkeit";
 "pipe.mode.diameter" = "Durchmesser";
@@ -56,7 +56,7 @@
 
 "pro.title" = "HydroCalc Pro";
 "pro.subtitle" = "Die erweiterten Hydraulik-Rechner dauerhaft freischalten.";
-"pro.feature.pipe" = "Rohrgeschwindigkeit und erforderlichen Innendurchmesser berechnen";
+"pro.feature.pipe" = "Strömungsgeschwindigkeit und erforderlichen Innendurchmesser berechnen";
 "pro.feature.kv" = "Kv-Wert und Differenzdruck berechnen";
 "pro.feature.once" = "Einmal kaufen – dauerhaft freigeschaltet";
 "pro.buy" = "HydroCalc Pro kaufen";
