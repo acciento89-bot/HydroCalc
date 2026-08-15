@@ -4,6 +4,7 @@ struct SettingsView: View {
     @EnvironmentObject private var proStore: ProStore
     @Environment(\.dismiss) private var dismiss
     @AppStorage("appLanguage") private var appLanguage = "system"
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -22,6 +23,12 @@ struct SettingsView: View {
                         Spacer()
                         Text(proStore.isPro ? "settings.pro.active" : "settings.pro.free")
                             .foregroundStyle(proStore.isPro ? AppTheme.accent : .secondary)
+                    }
+
+                    if !proStore.isPro {
+                        Button("pro.buy") {
+                            showPaywall = true
+                        }
                     }
 
                     Button("pro.restore") {
@@ -50,6 +57,10 @@ struct SettingsView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("common.done") { dismiss() }
                 }
+            }
+            .sheet(isPresented: $showPaywall) {
+                ProPaywallView()
+                    .environmentObject(proStore)
             }
         }
         .tint(AppTheme.accent)
