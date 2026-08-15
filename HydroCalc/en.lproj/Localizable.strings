@@ -1,11 +1,11 @@
 "home.eyebrow" = "Kamilunavo HVAC Tool";
 "home.title" = "Hydronics, calculated fast";
-"home.subtitle" = "Flow, temperature difference, pipe velocity and Kv directly in the field.";
+"home.subtitle" = "Flow, temperature difference, flow velocity and Kv directly in the field.";
 "home.flow.title" = "Flow & heat output";
 "home.flow.text" = "Calculate heat output, flow or temperature difference from the other two values.";
 "home.pressure.title" = "Pressure converter";
 "home.pressure.text" = "Quickly convert bar, kPa, mbar, mH₂O and psi.";
-"home.pipe.title" = "Pipe velocity";
+"home.pipe.title" = "Flow velocity";
 "home.pipe.text" = "Calculate flow velocity from flow and inside diameter or determine the required inside diameter.";
 "home.kv.title" = "Kv calculator";
 "home.kv.text" = "Calculate Kv or differential pressure from flow and valve coefficient.";
@@ -23,7 +23,7 @@
 "flow.presets" = "Quick select";
 "flow.note" = "Calculation for water using the practical factor 1.163 Wh/(l·K). For glycol mixtures or other fluids, fluid properties and manufacturer data must be considered.";
 
-"pipe.title" = "Pipe velocity";
+"pipe.title" = "Flow velocity";
 "pipe.mode.title" = "Calculation";
 "pipe.mode.velocity" = "Velocity";
 "pipe.mode.diameter" = "Diameter";
@@ -56,7 +56,7 @@
 
 "pro.title" = "HydroCalc Pro";
 "pro.subtitle" = "Permanently unlock the advanced hydronic calculators.";
-"pro.feature.pipe" = "Calculate pipe velocity and required inside diameter";
+"pro.feature.pipe" = "Calculate flow velocity and required inside diameter";
 "pro.feature.kv" = "Calculate Kv and differential pressure";
 "pro.feature.once" = "One-time purchase – permanently unlocked";
 "pro.buy" = "Buy HydroCalc Pro";
