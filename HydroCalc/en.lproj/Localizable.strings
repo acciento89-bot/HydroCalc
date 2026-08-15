@@ -1,0 +1,85 @@
+"home.eyebrow" = "Kamilunavo HVAC Tool";
+"home.title" = "Hydronics, calculated fast";
+"home.subtitle" = "Flow, temperature difference, pipe velocity and Kv directly in the field.";
+"home.flow.title" = "Flow & heat output";
+"home.flow.text" = "Calculate heat output, flow or temperature difference from the other two values.";
+"home.pressure.title" = "Pressure converter";
+"home.pressure.text" = "Quickly convert bar, kPa, mbar, mH₂O and psi.";
+"home.pipe.title" = "Pipe velocity";
+"home.pipe.text" = "Calculate flow velocity from flow and inside diameter or determine the required inside diameter.";
+"home.kv.title" = "Kv calculator";
+"home.kv.text" = "Calculate Kv or differential pressure from flow and valve coefficient.";
+
+"flow.title" = "Hydronic flow";
+"flow.solve.title" = "Choose the unknown value";
+"flow.solve.flow" = "Flow";
+"flow.solve.power" = "Output";
+"flow.solve.deltaT" = "ΔT";
+"flow.power" = "Heat output";
+"flow.flow" = "Flow";
+"flow.deltaT" = "Temperature difference";
+"flow.m3h" = "Flow";
+"flow.lmin" = "Flow";
+"flow.presets" = "Quick select";
+"flow.note" = "Calculation for water using the practical factor 1.163 Wh/(l·K). For glycol mixtures or other fluids, fluid properties and manufacturer data must be considered.";
+
+"pipe.title" = "Pipe velocity";
+"pipe.mode.title" = "Calculation";
+"pipe.mode.velocity" = "Velocity";
+"pipe.mode.diameter" = "Diameter";
+"pipe.flow" = "Flow";
+"pipe.innerDiameter" = "Inside diameter";
+"pipe.targetVelocity" = "Target velocity";
+"pipe.velocity" = "Velocity";
+"pipe.requiredDiameter" = "Required inside Ø";
+"pipe.area" = "Cross section";
+"pipe.note" = "The result is a geometric calculation aid. Material, pipe roughness, pressure loss, fittings, noise limits and the actual system design must be checked separately.";
+
+"kv.title" = "Kv calculator";
+"kv.mode.title" = "Calculation";
+"kv.mode.kv" = "Kv value";
+"kv.mode.pressure" = "Pressure drop";
+"kv.flow" = "Flow";
+"kv.pressure" = "Differential pressure";
+"kv.value" = "Kv value";
+"kv.note" = "Kv calculation for water using the common relationship Q = Kv · √Δp. Manufacturer curves and actual operating conditions take precedence.";
+
+"pressure.title" = "Pressure converter";
+"pressure.source" = "Source unit";
+"pressure.value" = "Value";
+"pressure.bar" = "Pressure";
+"pressure.kpa" = "Pressure";
+"pressure.mbar" = "Pressure";
+"pressure.mws" = "Pressure head";
+"pressure.psi" = "Pressure";
+"pressure.note" = "mH₂O is treated as metres of water column under standard conditions and is provided here as a practical unit conversion.";
+
+"pro.title" = "HydroCalc Pro";
+"pro.subtitle" = "Permanently unlock the advanced hydronic calculators.";
+"pro.feature.pipe" = "Calculate pipe velocity and required inside diameter";
+"pro.feature.kv" = "Calculate Kv and differential pressure";
+"pro.feature.once" = "One-time purchase – permanently unlocked";
+"pro.buy" = "Buy HydroCalc Pro";
+"pro.buy.price" = "Buy HydroCalc Pro – %@";
+"pro.restore" = "Restore purchases";
+"pro.note" = "One-time In-App Purchase. No subscription.";
+
+"settings.title" = "Settings";
+"settings.language" = "Language";
+"settings.language.system" = "System";
+"settings.pro" = "HydroCalc Pro";
+"settings.status" = "Status";
+"settings.pro.active" = "Unlocked";
+"settings.pro.free" = "Free";
+"settings.links" = "Links";
+"settings.support" = "Support";
+"settings.privacy" = "Privacy";
+"settings.about" = "About HydroCalc";
+"settings.version" = "Version";
+"settings.developer" = "Developer";
+
+"common.result" = "Result";
+"common.invalid" = "Enter valid values greater than 0.";
+"common.done" = "Done";
+"common.close" = "Close";
+"common.disclaimer" = "HydroCalc is a calculation aid for trained professionals. Manufacturer data, applicable standards, system design and actual measurements always take precedence.";
