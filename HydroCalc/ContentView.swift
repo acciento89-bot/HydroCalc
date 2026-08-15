@@ -36,7 +36,7 @@ struct ContentView: View {
                     .buttonStyle(.plain)
 
                     proTool(
-                        icon: "pipe.and.drop.fill",
+                        icon: "drop.circle.fill",
                         title: "home.pipe.title",
                         text: "home.pipe.text"
                     ) {
