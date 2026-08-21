@@ -12,19 +12,12 @@ val generateLauncherIcon by tasks.registering {
         if (!sourceIcon.isFile) throw GradleException("Canonical HydroCalc AppIcon is missing: ${sourceIcon.path}")
         val source = javax.imageio.ImageIO.read(sourceIcon)
             ?: throw GradleException("Canonical HydroCalc AppIcon could not be decoded")
-        val normalized = java.awt.image.BufferedImage(source.width, source.height, java.awt.image.BufferedImage.TYPE_INT_ARGB)
-        val graphics = normalized.createGraphics()
-        try {
-            graphics.drawImage(source, 0, 0, null)
-        } finally {
-            graphics.dispose()
-        }
         listOf(
             generatedIconResDir.resolve("drawable-nodpi/app_icon_source.png"),
             generatedIconResDir.resolve("mipmap-nodpi/ic_launcher.png"),
         ).forEach { output ->
             output.parentFile.mkdirs()
-            if (!javax.imageio.ImageIO.write(normalized, "png", output)) {
+            if (!javax.imageio.ImageIO.write(source, "png", output)) {
                 throw GradleException("Could not encode normalized HydroCalc launcher icon")
             }
         }
@@ -58,23 +51,18 @@ android {
     }
 }
 
-tasks.named("preBuild").configure {
-    dependsOn(generateLauncherIcon)
-}
+tasks.named("preBuild").configure { dependsOn(generateLauncherIcon) }
 
 dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.activity:activity-compose:1.12.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
-
     implementation(platform("androidx.compose:compose-bom:2026.06.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
-
     implementation("com.android.billingclient:billing-ktx:9.1.0")
-
     testImplementation("junit:junit:4.13.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
