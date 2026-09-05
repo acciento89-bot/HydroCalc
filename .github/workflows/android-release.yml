@@ -1,6 +1,11 @@
 name: Android Release Bundle
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-release.yml'
   workflow_dispatch:
     inputs:
       version_name:
@@ -15,6 +20,10 @@ on:
 permissions:
   contents: read
 
+env:
+  RELEASE_VERSION_NAME: ${{ github.event.inputs.version_name || '1.0.2' }}
+  RELEASE_VERSION_CODE: ${{ github.event.inputs.version_code || '3' }}
+
 jobs:
   signed-aab:
     runs-on: ubuntu-latest
@@ -25,8 +34,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -F 'versionName = "${{ inputs.version_name }}"' android/app/build.gradle.kts
-          grep -F 'versionCode = ${{ inputs.version_code }}' android/app/build.gradle.kts
+          grep -F "versionName = \"$RELEASE_VERSION_NAME\"" android/app/build.gradle.kts
+          grep -F "versionCode = $RELEASE_VERSION_CODE" android/app/build.gradle.kts
           grep -F 'applicationId = "de.kamilunavo.hydrocalc"' android/app/build.gradle.kts
           grep -F 'targetSdk = 36' android/app/build.gradle.kts
           grep -F 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
@@ -82,7 +91,7 @@ jobs:
       - name: Upload release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: HydroCalc-${{ inputs.version_name }}-${{ inputs.version_code }}-PlayStore
+          name: HydroCalc-${{ env.RELEASE_VERSION_NAME }}-${{ env.RELEASE_VERSION_CODE }}-PlayStore
           path: |
             android/app/build/outputs/bundle/release/app-release.aab
             android/app/build/outputs/bundle/release/app-release.aab.sha256
