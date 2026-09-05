@@ -1,0 +1,99 @@
+name: Android Release Bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-release.yml'
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: Expected version name
+        required: true
+        default: '1.0.2'
+      version_code:
+        description: Expected version code
+        required: true
+        default: '3'
+
+permissions:
+  contents: read
+
+env:
+  RELEASE_VERSION_NAME: ${{ github.event.inputs.version_name || '1.0.2' }}
+  RELEASE_VERSION_CODE: ${{ github.event.inputs.version_code || '3' }}
+
+jobs:
+  signed-aab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard release identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F "versionName = \"$RELEASE_VERSION_NAME\"" android/app/build.gradle.kts
+          grep -F "versionCode = $RELEASE_VERSION_CODE" android/app/build.gradle.kts
+          grep -F 'applicationId = "de.kamilunavo.hydrocalc"' android/app/build.gradle.kts
+          grep -F 'targetSdk = 36' android/app/build.gradle.kts
+          grep -F 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          test -f android/app/src/main/res/drawable/app_icon_source.xml
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          grep -F '@drawable/app_icon_source' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android 16 SDK
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Set up Gradle 9.5
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
+      - name: Require signing secrets
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_B64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$KEYSTORE_B64"
+          test -n "$STORE_PASSWORD"
+          test -n "$KEY_ALIAS"
+          test -n "$KEY_PASSWORD"
+          echo "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/hydrocalc-upload.jks"
+          test -s "$RUNNER_TEMP/hydrocalc-upload.jks"
+      - name: Run unit tests
+        run: gradle -p android testDebugUnitTest --stacktrace
+      - name: Build signed release App Bundle
+        env:
+          ANDROID_UPLOAD_KEYSTORE_PATH: ${{ runner.temp }}/hydrocalc-upload.jks
+          ANDROID_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+          ANDROID_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          ANDROID_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: gradle -p android bundleRelease --stacktrace
+      - name: Verify signed App Bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          AAB='android/app/build/outputs/bundle/release/app-release.aab'
+          test -s "$AAB"
+          jarsigner -verify -verbose -certs "$AAB" >/tmp/jarsigner.txt
+          grep -q 'jar verified' /tmp/jarsigner.txt
+          sha256sum "$AAB" | tee android/app/build/outputs/bundle/release/app-release.aab.sha256
+      - name: Upload release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: HydroCalc-${{ env.RELEASE_VERSION_NAME }}-${{ env.RELEASE_VERSION_CODE }}-PlayStore
+          path: |
+            android/app/build/outputs/bundle/release/app-release.aab
+            android/app/build/outputs/bundle/release/app-release.aab.sha256
+          if-no-files-found: error
+          retention-days: 30
