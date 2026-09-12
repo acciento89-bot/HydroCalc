@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'android/**'
+      - 'store/google-play/**'
       - '.github/workflows/android-release.yml'
   workflow_dispatch:
     inputs:
@@ -30,7 +31,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - name: Guard release identity
+      - name: Guard release identity and Store icon parity
         shell: bash
         run: |
           set -euo pipefail
@@ -42,6 +43,24 @@ jobs:
           test -f android/app/src/main/res/drawable/app_icon_source.xml
           test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
           grep -F '@drawable/app_icon_source' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test -s store/google-play/icon.svg
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          launcher=Path('android/app/src/main/res/drawable/app_icon_source.xml').read_text()
+          colors=Path('android/app/src/main/res/values/launcher_colors.xml').read_text()
+          play=Path('store/google-play/icon.svg').read_text()
+          expected=set(re.findall(r'#[0-9A-Fa-f]{6}', launcher+colors))
+          actual=set(re.findall(r'#[0-9A-Fa-f]{6}', play))
+          if expected != actual:
+              raise SystemExit(f'HydroCalc icon colors differ: {expected} != {actual}')
+          launcher_paths=[re.sub(r'[ ,]', '', x) for x in re.findall(r'android:pathData="([^"]+)"', launcher)]
+          play_paths=[re.sub(r'[ ,]', '', x) for x in re.findall(r'<path[^>]*\bd="([^"]+)"', play)]
+          for p in launcher_paths:
+              if p not in play_paths:
+                  raise SystemExit(f'HydroCalc launcher path missing from Play icon: {p}')
+          print('HydroCalc launcher/Play icon source parity OK')
+          PY
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -49,8 +68,11 @@ jobs:
           java-version: '17'
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-      - name: Install Android 16 SDK
-        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Install Android 16 SDK and icon renderer
+        run: |
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin
       - name: Set up Gradle 9.5
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -79,6 +101,15 @@ jobs:
           ANDROID_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
           ANDROID_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
         run: gradle -p android bundleRelease --stacktrace
+      - name: Render canonical Google Play icon
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p android/play-assets
+          rsvg-convert -w 512 -h 512 store/google-play/icon.svg -o android/play-assets/icon-512.png
+          file android/play-assets/icon-512.png
+          test "$(stat -c%s android/play-assets/icon-512.png)" -lt 1048576
+          sha256sum android/play-assets/icon-512.png > android/play-assets/icon-512.png.sha256
       - name: Verify signed App Bundle
         shell: bash
         run: |
@@ -88,12 +119,14 @@ jobs:
           jarsigner -verify -verbose -certs "$AAB" >/tmp/jarsigner.txt
           grep -q 'jar verified' /tmp/jarsigner.txt
           sha256sum "$AAB" | tee android/app/build/outputs/bundle/release/app-release.aab.sha256
-      - name: Upload release bundle
+      - name: Upload release bundle and canonical Play icon
         uses: actions/upload-artifact@v4
         with:
           name: HydroCalc-${{ env.RELEASE_VERSION_NAME }}-${{ env.RELEASE_VERSION_CODE }}-PlayStore
           path: |
             android/app/build/outputs/bundle/release/app-release.aab
             android/app/build/outputs/bundle/release/app-release.aab.sha256
+            android/play-assets/icon-512.png
+            android/play-assets/icon-512.png.sha256
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 30
