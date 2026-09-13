@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val showBillingStatus = shouldShowBillingStatus(
-            intent.getBooleanExtra("${BuildConfig.APPLICATION_ID}.STORE_SCREENSHOTS", false),
+            intent.getBooleanExtra(storeScreenshotsExtra(packageName), false),
         )
         setContent {
             val billing = remember { BillingManager(applicationContext) }
@@ -520,3 +520,5 @@ private fun fmt(value: Double, digits: Int = 2): String = String.format(Locale.G
 
 
 internal fun shouldShowBillingStatus(storeScreenshots: Boolean): Boolean = !storeScreenshots
+
+internal fun storeScreenshotsExtra(packageName: String): String = "$packageName.STORE_SCREENSHOTS"
