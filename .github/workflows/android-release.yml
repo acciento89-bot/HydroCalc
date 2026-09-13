@@ -6,6 +6,7 @@ on:
     paths:
       - 'android/**'
       - 'store/google-play/**'
+      - 'HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
       - '.github/workflows/android-release.yml'
   workflow_dispatch:
     inputs:
@@ -39,28 +40,14 @@ jobs:
           grep -F "versionCode = $RELEASE_VERSION_CODE" android/app/build.gradle.kts
           grep -F 'applicationId = "de.kamilunavo.hydrocalc"' android/app/build.gradle.kts
           grep -F 'targetSdk = 36' android/app/build.gradle.kts
-          grep -F 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
-          test -f android/app/src/main/res/drawable/app_icon_source.xml
-          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          grep -F '@drawable/app_icon_source' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          test -s store/google-play/icon.svg
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          launcher=Path('android/app/src/main/res/drawable/app_icon_source.xml').read_text()
-          colors=Path('android/app/src/main/res/values/launcher_colors.xml').read_text()
-          play=Path('store/google-play/icon.svg').read_text()
-          expected=set(re.findall(r'#[0-9A-Fa-f]{6}', launcher+colors))
-          actual=set(re.findall(r'#[0-9A-Fa-f]{6}', play))
-          if expected != actual:
-              raise SystemExit(f'HydroCalc icon colors differ: {expected} != {actual}')
-          launcher_paths=[re.sub(r'[ ,]', '', x) for x in re.findall(r'android:pathData="([^"]+)"', launcher)]
-          play_paths=[re.sub(r'[ ,]', '', x) for x in re.findall(r'<path[^>]*\bd="([^"]+)"', play)]
-          for p in launcher_paths:
-              if p not in play_paths:
-                  raise SystemExit(f'HydroCalc launcher path missing from Play icon: {p}')
-          print('HydroCalc launcher/Play icon source parity OK')
-          PY
+          IOS_ICON='HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+          ANDROID_ICON='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
+          grep -F 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
+          test -s "$IOS_ICON"
+          test -s "$ANDROID_ICON"
+          cmp -s "$IOS_ICON" "$ANDROID_ICON"
+          test -z "$(find android/app/src/main/res -type f \( -path '*/mipmap-anydpi*' -o -iname '*adaptive*' -o -iname '*foreground*' -o -iname '*background*' \) -print -quit)"
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -72,7 +59,7 @@ jobs:
         run: |
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
           sudo apt-get update -qq
-          sudo apt-get install -y -qq librsvg2-bin
+          sudo apt-get install -y -qq imagemagick
       - name: Set up Gradle 9.5
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -106,7 +93,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p android/play-assets
-          rsvg-convert -w 512 -h 512 store/google-play/icon.svg -o android/play-assets/icon-512.png
+          convert HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png -resize 512x512 android/play-assets/icon-512.png
           file android/play-assets/icon-512.png
           test "$(stat -c%s android/play-assets/icon-512.png)" -lt 1048576
           sha256sum android/play-assets/icon-512.png > android/play-assets/icon-512.png.sha256
