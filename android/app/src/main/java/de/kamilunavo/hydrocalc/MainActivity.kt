@@ -51,9 +51,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val showBillingStatus = shouldShowBillingStatus(
+            intent.getBooleanExtra("${BuildConfig.APPLICATION_ID}.STORE_SCREENSHOTS", false),
+        )
         setContent {
             val billing = remember { BillingManager(applicationContext) }
-            HydroCalcRoot(activity = this, billing = billing)
+            HydroCalcRoot(activity = this, billing = billing, showBillingStatus = showBillingStatus)
         }
     }
 }
@@ -63,7 +66,7 @@ private enum class FlowMode { FLOW, POWER, DELTA_T }
 private enum class PressureUnit { BAR, KPA, MBAR, MWS, PSI }
 
 @Composable
-private fun HydroCalcRoot(activity: Activity, billing: BillingManager) {
+private fun HydroCalcRoot(activity: Activity, billing: BillingManager, showBillingStatus: Boolean) {
     var language by remember { mutableStateOf(AppLanguage.DE) }
     var screen by remember { mutableStateOf(HydroScreen.HOME) }
 
@@ -87,7 +90,7 @@ private fun HydroCalcRoot(activity: Activity, billing: BillingManager) {
                 Column(Modifier.fillMaxSize()) {
                     BrandBar(language, billing.isPro) { language = it }
                     when (screen) {
-                        HydroScreen.HOME -> HomeScreen(language, billing) { destination ->
+                        HydroScreen.HOME -> HomeScreen(language, billing, showBillingStatus) { destination ->
                             screen = when {
                                 destination == HydroScreen.FLOW -> HydroScreen.FLOW
                                 destination == HydroScreen.PRESSURE -> HydroScreen.PRESSURE
@@ -100,7 +103,7 @@ private fun HydroCalcRoot(activity: Activity, billing: BillingManager) {
                         HydroScreen.PRESSURE -> PressureConverter(language) { screen = HydroScreen.HOME }
                         HydroScreen.PIPE -> PipeCalculator(language) { screen = HydroScreen.HOME }
                         HydroScreen.KV -> KvCalculator(language) { screen = HydroScreen.HOME }
-                        HydroScreen.PRO -> ProGate(language, activity, billing) { screen = HydroScreen.HOME }
+                        HydroScreen.PRO -> ProGate(language, activity, billing, showBillingStatus) { screen = HydroScreen.HOME }
                     }
                 }
             }
@@ -109,7 +112,7 @@ private fun HydroCalcRoot(activity: Activity, billing: BillingManager) {
 }
 
 @Composable
-private fun HomeScreen(language: AppLanguage, billing: BillingManager, onOpen: (HydroScreen) -> Unit) {
+private fun HomeScreen(language: AppLanguage, billing: BillingManager, showBillingStatus: Boolean, onOpen: (HydroScreen) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -173,7 +176,7 @@ private fun HomeScreen(language: AppLanguage, billing: BillingManager, onOpen: (
                 Text(if (language == AppLanguage.DE) "Käufe wiederherstellen" else "Restore purchases")
             }
         }
-        billing.statusMessage?.let { StatusBanner(it) }
+        if (showBillingStatus) billing.statusMessage?.let { StatusBanner(it) }
         NoteCard(
             if (language == AppLanguage.DE)
                 "Rechenhilfe für Fachkräfte. Herstellerangaben, Normen, Anlagenplanung und reale Messwerte haben immer Vorrang."
@@ -381,7 +384,7 @@ private fun KvCalculator(language: AppLanguage, onBack: () -> Unit) {
 }
 
 @Composable
-private fun ProGate(language: AppLanguage, activity: Activity, billing: BillingManager, onBack: () -> Unit) {
+private fun ProGate(language: AppLanguage, activity: Activity, billing: BillingManager, showBillingStatus: Boolean, onBack: () -> Unit) {
     ToolScreen(
         code = "PRO",
         accent = Aqua,
@@ -423,7 +426,7 @@ private fun ProGate(language: AppLanguage, activity: Activity, billing: BillingM
                 }
             }
         }
-        billing.statusMessage?.let { StatusBanner(it) }
+        if (showBillingStatus) billing.statusMessage?.let { StatusBanner(it) }
     }
 }
 
@@ -514,3 +517,6 @@ private fun pressureUnitLabel(unit: PressureUnit): String = when (unit) {
 
 private fun String.number(): Double = replace(',', '.').toDoubleOrNull() ?: 0.0
 private fun fmt(value: Double, digits: Int = 2): String = String.format(Locale.GERMANY, "%.${digits}f", value)
+
+
+internal fun shouldShowBillingStatus(storeScreenshots: Boolean): Boolean = !storeScreenshots
