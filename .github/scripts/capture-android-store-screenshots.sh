@@ -73,7 +73,7 @@ PY
 
 launch_app() {
   adb shell am force-stop "$PACKAGE_NAME"
-  adb shell am start -W -n "$PACKAGE_NAME/.MainActivity"
+  adb shell am start -W -n "$PACKAGE_NAME/.MainActivity" --ez "$PACKAGE_NAME.STORE_SCREENSHOTS" true
   wait_for_foreground
   wait_for_text "$WAIT_TEXT"
 }
