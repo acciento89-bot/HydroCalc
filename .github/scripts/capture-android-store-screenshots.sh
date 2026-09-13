@@ -2,14 +2,16 @@
 set -euo pipefail
 
 : "${PACKAGE_NAME:?PACKAGE_NAME is required}"
+: "${WAIT_TEXT:?WAIT_TEXT is required}"
 : "${SECOND_ACTION:?SECOND_ACTION is required}"
 : "${OUTPUT_DIR:?OUTPUT_DIR is required}"
+SECOND_TEXT="${SECOND_TEXT:-}"
 
 readonly apk_path="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
 readonly output_dir="$GITHUB_WORKSPACE/$OUTPUT_DIR"
 
 current_focus() {
-  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" || true
+  adb shell dumpsys window | grep -E "mCurrentFocus=" || true
 }
 
 wait_for_foreground() {
@@ -27,11 +29,53 @@ wait_for_foreground() {
   return 1
 }
 
+wait_for_text() {
+  local expected="$1"
+  local attempt
+  for attempt in $(seq 1 30); do
+    adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
+    if adb shell cat /sdcard/window.xml 2>/dev/null | grep -Fq "$expected"; then
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Timed out waiting for real app UI: $expected" >&2
+  return 1
+}
+
+tap_by_text() {
+  local expected="$1"
+  local xml_path="$RUNNER_TEMP/window.xml"
+  local coordinates
+  adb shell uiautomator dump /sdcard/window.xml >/dev/null
+  adb exec-out cat /sdcard/window.xml > "$xml_path"
+  coordinates="$(python3 - "$xml_path" "$expected" <<'PY'
+import re
+import sys
+import xml.etree.ElementTree as ET
+
+root = ET.parse(sys.argv[1]).getroot()
+expected = sys.argv[2]
+for node in root.iter("node"):
+    if expected in (node.attrib.get("text", ""), node.attrib.get("content-desc", "")):
+        match = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.attrib.get("bounds", ""))
+        if match:
+            left, top, right, bottom = map(int, match.groups())
+            print((left + right) // 2, (top + bottom) // 2)
+            break
+else:
+    raise SystemExit(f"Unable to find tappable UI text: {expected}")
+PY
+)"
+  read -r tap_x tap_y <<<"$coordinates"
+  adb shell input tap "$tap_x" "$tap_y"
+}
+
 launch_app() {
   adb shell am force-stop "$PACKAGE_NAME"
-  adb shell am start -n "$PACKAGE_NAME/.MainActivity"
+  adb shell am start -W -n "$PACKAGE_NAME/.MainActivity"
   wait_for_foreground
-  sleep 8
+  wait_for_text "$WAIT_TEXT"
 }
 
 assert_clean_foreground() {
@@ -47,6 +91,7 @@ assert_clean_foreground() {
 mkdir -p "$output_dir"
 rm -f "$output_dir"/*.png
 adb install -r "$apk_path"
+adb shell settings put global hide_error_dialogs 1
 adb shell cmd locale set-app-locales "$PACKAGE_NAME" --user 0 de-DE
 launch_app
 assert_clean_foreground
@@ -54,7 +99,11 @@ adb exec-out screencap -p > "$output_dir/01-current-ui.png"
 
 case "$SECOND_ACTION" in
   tap)
-    adb shell input tap 540 2150
+    if [[ -n "$SECOND_TEXT" ]]; then
+      tap_by_text "$SECOND_TEXT"
+    else
+      adb shell input tap 540 2150
+    fi
     sleep 3
     ;;
   dark)
@@ -72,6 +121,8 @@ case "$SECOND_ACTION" in
     ;;
 esac
 
+wait_for_foreground
+wait_for_text "$WAIT_TEXT"
 assert_clean_foreground
 adb exec-out screencap -p > "$output_dir/02-current-ui-detail.png"
 
