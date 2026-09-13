@@ -9,9 +9,56 @@ SECOND_TEXT="${SECOND_TEXT:-}"
 
 readonly apk_path="$GITHUB_WORKSPACE/android/app/build/outputs/apk/debug/app-debug.apk"
 readonly output_dir="$GITHUB_WORKSPACE/$OUTPUT_DIR"
+readonly ui_dump_path="${RUNNER_TEMP:-/tmp}/current-window.xml"
 
 current_focus() {
   adb shell dumpsys window | grep -E "mCurrentFocus=" || true
+}
+
+dump_ui() {
+  local attempt
+  rm -f "$ui_dump_path"
+  for attempt in $(seq 1 10); do
+    adb shell rm -f /sdcard/current-window.xml
+    if adb shell uiautomator dump /sdcard/current-window.xml >/dev/null 2>&1 &&
+      adb pull /sdcard/current-window.xml "$ui_dump_path" >/dev/null 2>&1; then
+      cat "$ui_dump_path"
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Timed out waiting for a readable UI hierarchy." >&2
+  return 1
+}
+
+assert_no_system_dialog() {
+  local ui
+  ui="$(dump_ui)"
+  if grep -Eqi "System UI (isn't|is not) responding|isn't responding|is not responding|keeps stopping|Close app" <<<"$ui"; then
+    echo "System error dialog detected; refusing to capture." >&2
+    printf '%s\n' "$ui" >&2
+    return 1
+  fi
+}
+
+stabilize_launcher() {
+  local attempt
+  local focus
+  adb shell input keyevent KEYCODE_HOME
+  for attempt in $(seq 1 30); do
+    focus="$(current_focus)"
+    if [[ "$focus" == *"Application Not Responding"* ]]; then
+      adb shell am force-stop com.android.launcher3
+      adb shell input keyevent KEYCODE_HOME
+    elif [[ "$focus" == *"com.android.launcher3"* ]] && dump_ui >/dev/null; then
+      assert_no_system_dialog
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Timed out waiting for a responsive Android launcher." >&2
+  current_focus >&2
+  return 1
 }
 
 wait_for_foreground() {
@@ -32,14 +79,16 @@ wait_for_foreground() {
 wait_for_text() {
   local expected="$1"
   local attempt
+  local ui
   for attempt in $(seq 1 30); do
-    adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
-    if adb shell cat /sdcard/window.xml 2>/dev/null | grep -Fq "$expected"; then
+    ui="$(dump_ui)"
+    if grep -Fq "$expected" <<<"$ui"; then
       return 0
     fi
     sleep 1
   done
   echo "Timed out waiting for real app UI: $expected" >&2
+  printf '%s\n' "$ui" >&2
   return 1
 }
 
@@ -76,6 +125,7 @@ launch_app() {
   adb shell am start -W -n "$PACKAGE_NAME/.MainActivity" --ez "$PACKAGE_NAME.STORE_SCREENSHOTS" true
   wait_for_foreground
   wait_for_text "$WAIT_TEXT"
+  assert_no_system_dialog
 }
 
 assert_clean_foreground() {
@@ -86,6 +136,7 @@ assert_clean_foreground() {
     printf '%s\n' "$focus" >&2
     return 1
   fi
+  assert_no_system_dialog
 }
 
 mkdir -p "$output_dir"
@@ -93,6 +144,7 @@ rm -f "$output_dir"/*.png
 adb install -r "$apk_path"
 adb shell settings put global hide_error_dialogs 1
 adb shell cmd locale set-app-locales "$PACKAGE_NAME" --user 0 de-DE
+stabilize_launcher
 launch_app
 assert_clean_foreground
 adb exec-out screencap -p > "$output_dir/01-current-ui.png"
