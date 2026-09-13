@@ -34,7 +34,7 @@ jobs:
           gradle-version: "9.5.0"
 
       - name: Build local debug APK
-        run: gradle -p android --no-daemon assembleDebug --stacktrace
+        run: gradle -p android --no-daemon testDebugUnitTest assembleDebug --stacktrace
 
       - name: Enable emulator acceleration
         run: |
