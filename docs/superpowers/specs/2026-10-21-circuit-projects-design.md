@@ -1,0 +1,17 @@
+# Saved circuit projects
+Human authorized autonomous design and substantial upgrades on 20/21 October; no further routine approval gate. Architectural additive subsystem, implemented inline by assigned HydroCalc agent.
+
+Purpose: prepare a reusable multi-room heating-water flow worksheet for commissioning conversations. Preserve the approved separate HydroCalc app, all existing calculator formulas and StoreKit products.
+
+Chosen design: Foundation value models for named project/circuits/group, input power kW and ΔT K, calculated l/h using existing 1.163 approximation. Valid positive finite inputs only; totals explicitly count excluded invalid circuits. Capture a value-copy baseline, edit proposal, compare heat load and flow. Groups display subtotal flow and power. Text share exports every circuit, units, baseline and current values, water assumption and explicit noncertificate disclaimer in DE/EN. No valve/pump recommendations or compliance claims.
+
+Alternatives: single saved calculator history does not cover whole jobs; a full pipe-network solver introduces unsupported assumptions. Additive project worksheet is focused, independently testable and leaves paid pipe/Kv tools intact. New project functionality is free, built from the existing free heat-load calculator.
+
+Storage: Application Support versioned atomic JSON. Missing file means first launch. Legacy bare-array v0 loads without mutation, next save migrates to v1 envelope. Corrupt/future data blocks edits and shows a readable error; never silently overwrites. Mutations persist before publishing UI changes; failure retains prior state.
+
+UI: existing home card opens saved project list. Create/rename/delete projects; create/edit/delete named circuits with groups; confirm baseline replacement; compare totals and share. Scrollable native forms, accessible labels, adaptive stacked numeric fields, no device geometry guesses; state owned above destination transitions. iOS17 floor and existing phone/tablet support remain. Native Duo acceptance remains root-owned and unverified until measured.
+
+Acceptance: deterministic golden water flow; reject zero/negative/nonfinite; independent baseline; multi-group totals; invalid exclusion count; DE/EN report; cold reload; atomic failed writes; unsupported/corrupt bytes preserved; v0 migration. Root exclusively runs all compile/tests/native workloads. Live-source relationship is not proven by matching repository identity.
+
+## Android parity extension (root instruction21Oct)
+Implement equivalent Kotlin value models, versioned atomic JSON, grouped circuits, immutable baseline, comparison and ACTION_SEND worksheet, using existing Compose theme and DE/EN app language. Preserve Android de.kamilunavo.hydrocalc, existing BillingManager and math, minSdk26/SDK36 and source1.0.2(3). Existing historical signing/upload workflows remain frozen and must not be dispatched for this candidate. Android models use timestamp milliseconds and string UUID; each platform retains its own local document file, no cross-device sync claim. Unit-test org.json native implementation via JVM test dependency; no new runtime dependency. Root runs serial Gradle RED/GREEN and debug assembly; no agent-local compiler or device. Rotation state for project/detail/editor fields uses rememberSaveable. Save before updating visible list, keep prior file on errors, block corruption edits and expose retry. Google metadata remains draft pending actual native validation.

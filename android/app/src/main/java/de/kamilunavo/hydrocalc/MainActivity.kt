@@ -37,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,14 +64,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class HydroScreen { HOME, FLOW, PRESSURE, PIPE, KV, PRO }
+private enum class HydroScreen { HOME, PROJECTS, FLOW, PRESSURE, PIPE, KV, PRO }
 private enum class FlowMode { FLOW, POWER, DELTA_T }
 private enum class PressureUnit { BAR, KPA, MBAR, MWS, PSI }
 
 @Composable
 private fun HydroCalcRoot(activity: Activity, billing: BillingManager, showBillingStatus: Boolean) {
-    var language by remember { mutableStateOf(AppLanguage.DE) }
-    var screen by remember { mutableStateOf(HydroScreen.HOME) }
+    var language by rememberSaveable { mutableStateOf(AppLanguage.DE) }
+    var screen by rememberSaveable { mutableStateOf(HydroScreen.HOME) }
 
     BackHandler(enabled = screen != HydroScreen.HOME) { screen = HydroScreen.HOME }
 
@@ -94,6 +95,7 @@ private fun HydroCalcRoot(activity: Activity, billing: BillingManager, showBilli
                     when (screen) {
                         HydroScreen.HOME -> HomeScreen(language, billing, showBillingStatus) { destination ->
                             screen = when {
+                                destination == HydroScreen.PROJECTS -> HydroScreen.PROJECTS
                                 destination == HydroScreen.FLOW -> HydroScreen.FLOW
                                 destination == HydroScreen.PRESSURE -> HydroScreen.PRESSURE
                                 destination == HydroScreen.PIPE && billing.isPro -> HydroScreen.PIPE
@@ -101,6 +103,7 @@ private fun HydroCalcRoot(activity: Activity, billing: BillingManager, showBilli
                                 else -> HydroScreen.PRO
                             }
                         }
+                        HydroScreen.PROJECTS -> ProjectScreen(activity, language) { screen = HydroScreen.HOME }
                         HydroScreen.FLOW -> FlowCalculator(language) { screen = HydroScreen.HOME }
                         HydroScreen.PRESSURE -> PressureConverter(language) { screen = HydroScreen.HOME }
                         HydroScreen.PIPE -> PipeCalculator(language) { screen = HydroScreen.HOME }
@@ -124,6 +127,13 @@ private fun HomeScreen(language: AppLanguage, billing: BillingManager, showBilli
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         HeroPanel(language)
+        ToolCard(
+            code = "Σ",
+            title = if (language == AppLanguage.DE) "Heizkreisprojekte" else "Circuit projects",
+            subtitle = if (language == AppLanguage.DE) "Räume speichern, gruppieren und Ausgangsstand vergleichen." else "Save rooms, group circuits and compare a baseline.",
+            accent = Aqua,
+            onClick = { onOpen(HydroScreen.PROJECTS) },
+        )
         SectionEyebrow(if (language == AppLanguage.DE) "RECHNER" else "CALCULATORS")
         ToolCard(
             code = "Q",

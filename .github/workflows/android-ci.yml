@@ -3,6 +3,7 @@ name: Android CI
 on:
   push:
     branches:
+      - main
       - 'android/**'
     paths:
       - 'android/**'
@@ -29,6 +30,8 @@ jobs:
           java-version: '17'
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
       - name: Install Android 16 SDK
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - name: Set up Gradle 9.5
@@ -48,8 +51,8 @@ jobs:
           test -s "$AAB"
           grep -Fq 'applicationId = "de.kamilunavo.hydrocalc"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 3' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.2"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 4' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.1.0"' android/app/build.gradle.kts
           IOS_ICON='HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
           ANDROID_ICON='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
           grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
@@ -62,7 +65,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: HydroCalc-unsigned-release-aab
+          name: HydroCalc-1.1.0-4-unsigned-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7

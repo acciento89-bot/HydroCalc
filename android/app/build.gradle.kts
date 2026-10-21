@@ -17,8 +17,8 @@ android {
         applicationId = "de.kamilunavo.hydrocalc"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -59,5 +59,6 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("com.android.billingclient:billing-ktx:9.1.0")
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
