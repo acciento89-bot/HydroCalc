@@ -41,9 +41,11 @@ Interfaces: equivalent HydroCircuit/Project/Baseline/Totals; HydroProjectCodec a
 - [x] Write golden/invalid/baseline/group/report/storage/migration tests before new Kotlin behavior.
 - [x] Root Gradle testDebugUnitTest targeted RED, absent domain symbols.
 - [x] Implement Kotlin model/codec/atomic file storage; immutable copy baseline; same numeric assumptions.
-- [ ] Root targeted GREEN then complete Compose list/detail/editor, baseline/deletion dialogs, ACTION_SEND and local errors/retry.
-- [ ] Root entire unit suite and assembleDebug; native DE/EN/rotation/cold-restart/share QA later serially.
+- [x] Root targeted GREEN then complete Compose list/detail/editor, baseline/deletion dialogs, ACTION_SEND and local errors/retry.
+- [x] Root entire unit suite and assembleDebug; native DE/EN/rotation/cold-restart/share QA later serially.
 - [ ] Preserve historical workflow/signing/package/version/IAP; no dispatch/upload/push.
 
 ### Peer review fixes
 - [x] Fresh MAG review twoP2 accepted and tests written first. Root regressionRED exit133, then fix archive revalidation+duplicate identity checks, root core-review-green.log exit0.
+
+- [x] Fresh MAG Android review two P2 accepted. Added malformed archive tests first; root android-review-red.log expected assertion failure, then parser/end-of-input and strict optional baseline fixes; root android-review-green.log full suite plus assembleDebug PASS (10 tests, 0 failures/errors). Native acceptance and store delivery remain root-owned/pending.
