@@ -42,7 +42,7 @@ struct SettingsView: View {
                 }
 
                 Section("settings.about") {
-                    LabeledContent("settings.version", value: "1.0.0 (1)")
+                    LabeledContent("settings.version", value: (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") + " (" + (Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—") + ")")
                     LabeledContent("settings.developer", value: "Kamilunavo")
                 }
 
