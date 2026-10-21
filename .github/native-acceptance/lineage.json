@@ -1,0 +1,10 @@
+{
+  "source": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/ApprovedCalcAndroidQA/app/src/androidTest/java/de/kamilunavo/approvedcalcqa/ApprovedCalcNativeTest.java",
+  "source_sha256": "a61e0d261bdc75dc7b1d4d9afe72adde64454da0e905ff0262e06cf922b750ea",
+  "method": "hydroProjectsBaselineRotationColdReloadAndRealShare",
+  "method_sha256": "c87badb7488105afe1b6947b5c43840048d296ec424e049632ab0366fc6bd1e4",
+  "method_body_unchanged": true,
+  "helpers": "All shared helpers byte-exact; only single Hydro method retained and API35 cloud guard. Existing SDK cleanup path corrected from actual MAG environment evidence.",
+  "productMain": "f01d1266a642969143b77db3551f10b18f661588",
+  "transactions": false
+}
