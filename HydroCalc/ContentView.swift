@@ -12,6 +12,13 @@ struct ContentView: View {
                     header
 
                     NavigationLink {
+                        ProjectListView()
+                    } label: {
+                        HomeToolCard(icon: "folder.fill", title: "projects.title", text: "projects.intro", pro: false)
+                    }
+                    .buttonStyle(.plain)
+
+                    NavigationLink {
                         FlowCalculatorView()
                     } label: {
                         HomeToolCard(

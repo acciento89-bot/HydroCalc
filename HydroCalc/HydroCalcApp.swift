@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct HydroCalcApp: App {
     @StateObject private var proStore = ProStore()
+    @StateObject private var projectStore = ProjectStore()
     @AppStorage("appLanguage") private var appLanguage = "system"
 
     private var locale: Locale {
@@ -17,6 +18,7 @@ struct HydroCalcApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(proStore)
+                .environmentObject(projectStore)
                 .environment(\.locale, locale)
         }
     }
