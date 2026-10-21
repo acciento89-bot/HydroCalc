@@ -51,7 +51,7 @@ jobs:
           test -s "$AAB"
           grep -Fq 'applicationId = "de.kamilunavo.hydrocalc"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 4' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 5' android/app/build.gradle.kts
           grep -Fq 'versionName = "1.1.0"' android/app/build.gradle.kts
           IOS_ICON='HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
           ANDROID_ICON='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
@@ -65,7 +65,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: HydroCalc-1.1.0-4-unsigned-aab
+          name: HydroCalc-1.1.0-5-unsigned-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
