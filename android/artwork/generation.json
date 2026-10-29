@@ -1,0 +1,60 @@
+{
+  "application": "HydroCalc",
+  "master": "android/artwork/launcher.svg",
+  "masterSha256": "bc086b73f56c7a0708be38e798168896984447c0a7edcef106550168e3d56a33",
+  "generator": "scripts/generate_android_icons.cjs",
+  "generatorSha256": "d9a2cdc8078794b386c16b255b78624a5251d138189cd279a6dc261920afcd77",
+  "origin": "android/artwork/ORIGIN.json",
+  "originSha256": "daee783ebdc684b67446aaddaaa85159adb7737f9619e848095f2ec3f2e89710",
+  "notice": "android/app/src/main/assets/licenses/project-artwork/NOTICE.txt",
+  "noticeSha256": "f410295f621de8bcf9cc444188dc749322336fcd8496a07fcb9a8f67d065e506",
+  "renderer": {
+    "aom": "3.15.1",
+    "archive": "3.8.9",
+    "cairo": "1.18.6",
+    "cgif": "0.5.4",
+    "exif": "0.6.26",
+    "expat": "2.8.5",
+    "ffi": "3.8.0",
+    "fontconfig": "2.18.3",
+    "freetype": "2.14.3",
+    "fribidi": "1.0.17",
+    "glib": "2.90.0",
+    "harfbuzz": "14.5.0",
+    "heif": "1.23.5",
+    "highway": "1.4.0",
+    "imagequant": "2.4.1",
+    "lcms": "2.19.1",
+    "mozjpeg": "0826579",
+    "pango": "1.58.2",
+    "pixman": "0.46.4",
+    "png": "1.6.58",
+    "proxy-libintl": "0.5",
+    "rsvg": "2.63.2",
+    "tiff": "4.7.2",
+    "uhdr": "2.0.2",
+    "vips": "8.18.7",
+    "webp": "1.6.0",
+    "xml2": "2.15.4",
+    "zlib-ng": "2.3.3",
+    "sharp": "0.35.5"
+  },
+  "outputs": {
+    "android/app/src/main/res/drawable-nodpi/ic_launcher.png": {
+      "sha256": "9d0673c8ad0045d7a176cdd67e572bf8ca3a0cbeeb53f81e4d9adee4d5ce7728",
+      "bytes": 20597
+    },
+    "store/google-play/icon-512.png": {
+      "sha256": "5cf8cb676826765c55f19c63966fa205dc58ec38d0c6c706179c82d1d5ddb95d",
+      "bytes": 8374
+    },
+    "store/google-play/icon.svg": {
+      "sha256": "bc086b73f56c7a0708be38e798168896984447c0a7edcef106550168e3d56a33",
+      "bytes": 1495
+    },
+    "store/google-play/icon-source.json": {
+      "sha256": "153125f4ab6a9b676bc70f295395ccc671b77ac7bf5fb73ae75464b291e4cf70",
+      "bytes": 105
+    }
+  }
+}

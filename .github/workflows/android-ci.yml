@@ -7,10 +7,14 @@ on:
       - 'android/**'
     paths:
       - 'android/**'
+      - 'store/google-play/**'
+      - 'scripts/generate_android_icons.cjs'
       - '.github/workflows/android-ci.yml'
   pull_request:
     paths:
       - 'android/**'
+      - 'store/google-play/**'
+      - 'scripts/generate_android_icons.cjs'
       - '.github/workflows/android-ci.yml'
   workflow_dispatch:
 
@@ -53,13 +57,9 @@ jobs:
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'versionCode = 4' android/app/build.gradle.kts
           grep -Fq 'versionName = "1.1.0"' android/app/build.gradle.kts
-          IOS_ICON='HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
-          ANDROID_ICON='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
+          node scripts/generate_android_icons.cjs --verify
           grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
           ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
-          test -s "$IOS_ICON"
-          test -s "$ANDROID_ICON"
-          cmp -s "$IOS_ICON" "$ANDROID_ICON"
           test -z "$(find android/app/src/main/res -type f \( -path '*/mipmap-anydpi*' -o -iname '*adaptive*' -o -iname '*foreground*' -o -iname '*background*' \) -print -quit)"
           ! grep -Fq 'generateLauncherIcon' android/app/build.gradle.kts
       - name: Upload unsigned release bundle

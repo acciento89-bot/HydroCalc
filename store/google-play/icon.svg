@@ -1,6 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 108 108">
-  <path fill="#0D627A" d="M0,0h108v108h-108z"/>
-  <path fill="none" stroke="#F5FAFF" stroke-width="7" stroke-linejoin="round" d="M27,36 L81,36 L81,70 L27,70 Z"/>
-  <path fill="none" stroke="#5DE0E6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M37,51 L67,51 M58,42 L68,51 L58,60"/>
-  <path fill="#2D91E6" d="M54,57 C49,64 44,69 44,76 C44,83 48,88 54,88 C60,88 64,83 64,76 C64,69 59,64 54,57 Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<title>HydroCalc original geometric Android icon</title>
+<metadata>Original code-authored artwork created for this authorized task on 2026-10-29. No external images, glyphs, fonts, reference artwork or icon-library paths imported. Android master source; no iOS asset input.</metadata>
+<rect width="1024" height="1024" fill="#F4F2E9"/>
+<rect x="164" y="168" width="696" height="688" rx="32" fill="#FFFFFF"/>
+<rect x="224" y="250" width="576" height="76" rx="12" fill="#076879"/>
+<line x1="306" y1="326" x2="306" y2="650" stroke="#076879" stroke-width="32"/>
+<line x1="512" y1="326" x2="512" y2="650" stroke="#175F94" stroke-width="32"/>
+<line x1="718" y1="326" x2="718" y2="650" stroke="#076D5C" stroke-width="32"/>
+<circle cx="306" cy="490" r="56" fill="#FFFFFF" stroke="#076879" stroke-width="22"/>
+<circle cx="512" cy="560" r="56" fill="#FFFFFF" stroke="#175F94" stroke-width="22"/>
+<circle cx="718" cy="430" r="56" fill="#FFFFFF" stroke="#076D5C" stroke-width="22"/>
+<line x1="280" y1="490" x2="332" y2="490" stroke="#076879" stroke-width="16"/>
+<line x1="486" y1="560" x2="538" y2="560" stroke="#175F94" stroke-width="16"/>
+<line x1="692" y1="430" x2="744" y2="430" stroke="#076D5C" stroke-width="16"/>
+<rect x="252" y="720" width="108" height="22" fill="#16333F"/>
+<rect x="458" y="720" width="108" height="22" fill="#16333F"/>
+<rect x="664" y="720" width="108" height="22" fill="#16333F"/>
 </svg>

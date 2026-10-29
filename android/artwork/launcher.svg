@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<title>HydroCalc original geometric Android icon</title>
+<metadata>Original code-authored artwork created for this authorized task on 2026-10-29. No external images, glyphs, fonts, reference artwork or icon-library paths imported. Android master source; no iOS asset input.</metadata>
+<rect width="1024" height="1024" fill="#F4F2E9"/>
+<rect x="164" y="168" width="696" height="688" rx="32" fill="#FFFFFF"/>
+<rect x="224" y="250" width="576" height="76" rx="12" fill="#076879"/>
+<line x1="306" y1="326" x2="306" y2="650" stroke="#076879" stroke-width="32"/>
+<line x1="512" y1="326" x2="512" y2="650" stroke="#175F94" stroke-width="32"/>
+<line x1="718" y1="326" x2="718" y2="650" stroke="#076D5C" stroke-width="32"/>
+<circle cx="306" cy="490" r="56" fill="#FFFFFF" stroke="#076879" stroke-width="22"/>
+<circle cx="512" cy="560" r="56" fill="#FFFFFF" stroke="#175F94" stroke-width="22"/>
+<circle cx="718" cy="430" r="56" fill="#FFFFFF" stroke="#076D5C" stroke-width="22"/>
+<line x1="280" y1="490" x2="332" y2="490" stroke="#076879" stroke-width="16"/>
+<line x1="486" y1="560" x2="538" y2="560" stroke="#175F94" stroke-width="16"/>
+<line x1="692" y1="430" x2="744" y2="430" stroke="#076D5C" stroke-width="16"/>
+<rect x="252" y="720" width="108" height="22" fill="#16333F"/>
+<rect x="458" y="720" width="108" height="22" fill="#16333F"/>
+<rect x="664" y="720" width="108" height="22" fill="#16333F"/>
+</svg>

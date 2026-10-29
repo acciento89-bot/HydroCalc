@@ -6,7 +6,7 @@ on:
     paths:
       - 'android/**'
       - 'store/google-play/**'
-      - 'HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+      - 'scripts/generate_android_icons.cjs'
       - '.github/workflows/android-release.yml'
   workflow_dispatch:
     inputs:
@@ -40,13 +40,9 @@ jobs:
           grep -F "versionCode = $RELEASE_VERSION_CODE" android/app/build.gradle.kts
           grep -F 'applicationId = "de.kamilunavo.hydrocalc"' android/app/build.gradle.kts
           grep -F 'targetSdk = 36' android/app/build.gradle.kts
-          IOS_ICON='HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
-          ANDROID_ICON='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
+          node scripts/generate_android_icons.cjs --verify
           grep -F 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
           ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
-          test -s "$IOS_ICON"
-          test -s "$ANDROID_ICON"
-          cmp -s "$IOS_ICON" "$ANDROID_ICON"
           test -z "$(find android/app/src/main/res -type f \( -path '*/mipmap-anydpi*' -o -iname '*adaptive*' -o -iname '*foreground*' -o -iname '*background*' \) -print -quit)"
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -55,11 +51,9 @@ jobs:
           java-version: '17'
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-      - name: Install Android 16 SDK and icon renderer
+      - name: Install Android 16 SDK
         run: |
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq imagemagick
       - name: Set up Gradle 9.5
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -88,12 +82,12 @@ jobs:
           ANDROID_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
           ANDROID_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
         run: gradle -p android bundleRelease --stacktrace
-      - name: Render canonical Google Play icon
+      - name: Stage generated Google Play icon
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p android/play-assets
-          convert HydroCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png -resize 512x512 android/play-assets/icon-512.png
+          cp store/google-play/icon-512.png android/play-assets/icon-512.png
           file android/play-assets/icon-512.png
           test "$(stat -c%s android/play-assets/icon-512.png)" -lt 1048576
           sha256sum android/play-assets/icon-512.png > android/play-assets/icon-512.png.sha256

@@ -1,0 +1,12 @@
+{
+  "application": "HydroCalc",
+  "createdDate": "2026-10-29",
+  "authoringMethod": "Codex directly authored independent geometric SVG coordinates in the authorized portfolio task. No imagegen, stock asset, SF/Material symbol, old icon tracing or third-party artwork input.",
+  "master": "android/artwork/launcher.svg",
+  "masterSha256": "bc086b73f56c7a0708be38e798168896984447c0a7edcef106550168e3d56a33",
+  "proposalSha256": "179a25741ebc2818317cfba8f25613ca3446e1b925c6e8f94f3648df136efea5",
+  "googlePlayDirectory": "store/google-play",
+  "platformScope": "Android only; iOS assets are preserved and are not generation inputs.",
+  "review": "Rendered and visually reviewed at512/64/48/32px in the task; actual rebuilt Android launcher review remains pending.",
+  "rightsStatement": "This documents the creation method and inputs; no CC0, third-party license, exclusivity or trademark clearance is claimed."
+}
