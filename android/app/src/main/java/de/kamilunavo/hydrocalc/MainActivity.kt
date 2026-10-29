@@ -53,7 +53,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = true
         val showBillingStatus = shouldShowBillingStatus(
             intent.getBooleanExtra(storeScreenshotsExtra(packageName), false),
         )
@@ -71,7 +72,7 @@ private enum class PressureUnit { BAR, KPA, MBAR, MWS, PSI }
 @Composable
 private fun HydroCalcRoot(activity: Activity, billing: BillingManager, showBillingStatus: Boolean) {
     var language by rememberSaveable { mutableStateOf(AppLanguage.DE) }
-    var screen by rememberSaveable { mutableStateOf(HydroScreen.HOME) }
+    var screen by rememberSaveable { mutableStateOf(HydroScreen.PROJECTS) }
 
     BackHandler(enabled = screen != HydroScreen.HOME) { screen = HydroScreen.HOME }
 
@@ -85,13 +86,21 @@ private fun HydroCalcRoot(activity: Activity, billing: BillingManager, showBilli
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            listOf(Color(0xFF0A2230), Hydro950, Color(0xFF041016)),
+                            listOf(Hydro950, Hydro950),
                         ),
                     )
                     .padding(padding),
             ) {
                 Column(Modifier.fillMaxSize()) {
                     BrandBar(language, billing.isPro) { language = it }
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        TextButton(onClick = { screen = HydroScreen.PROJECTS }, modifier = Modifier.weight(1f)) {
+                            Text(if (language == AppLanguage.DE) "Heizkreisprojekte" else "Circuit projects", color = if (screen == HydroScreen.PROJECTS) Aqua else Text300)
+                        }
+                        TextButton(onClick = { screen = HydroScreen.HOME }, modifier = Modifier.weight(1f)) {
+                            Text(if (language == AppLanguage.DE) "Werkzeuge" else "Tools", color = if (screen == HydroScreen.HOME) Aqua else Text300)
+                        }
+                    }
                     when (screen) {
                         HydroScreen.HOME -> HomeScreen(language, billing, showBillingStatus) { destination ->
                             screen = when {
@@ -126,7 +135,7 @@ private fun HomeScreen(language: AppLanguage, billing: BillingManager, showBilli
             .padding(bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        HeroPanel(language)
+        WorksheetHeading(language)
         ToolCard(
             code = "Σ",
             title = if (language == AppLanguage.DE) "Heizkreisprojekte" else "Circuit projects",
@@ -173,7 +182,7 @@ private fun HomeScreen(language: AppLanguage, billing: BillingManager, showBilli
                 "Ventilkennwert und Differenzdruck sauber auslegen."
             else
                 "Size valve coefficient and differential pressure.",
-            accent = Color(0xFF7DD3FC),
+            accent = Color(0xFF175F94),
             locked = !billing.isPro,
             onClick = { onOpen(HydroScreen.KV) },
         )
@@ -364,7 +373,7 @@ private fun KvCalculator(language: AppLanguage, onBack: () -> Unit) {
 
     ToolScreen(
         code = "Kv",
-        accent = Color(0xFF7DD3FC),
+        accent = Color(0xFF175F94),
         title = "Kv / Δp",
         subtitle = if (language == AppLanguage.DE) "Ventilkennwert oder Differenzdruck bestimmen." else "Calculate valve coefficient or differential pressure.",
         backLabel = if (language == AppLanguage.DE) "Rechner" else "Calculators",
@@ -385,11 +394,11 @@ private fun KvCalculator(language: AppLanguage, onBack: () -> Unit) {
                 fmt(result, 3),
                 "bar",
                 emptyList(),
-                Color(0xFF7DD3FC),
+                Color(0xFF175F94),
             ) else InvalidCard(language)
         } else {
             val result = HydroCalculator.kv(flow.number(), dp.number())
-            if (result != null) ResultPanel("KV-WERT", fmt(result, 3), "Kv", emptyList(), Color(0xFF7DD3FC))
+            if (result != null) ResultPanel("KV-WERT", fmt(result, 3), "Kv", emptyList(), Color(0xFF175F94))
             else InvalidCard(language)
         }
     }
@@ -408,8 +417,8 @@ private fun ProGate(language: AppLanguage, activity: Activity, billing: BillingM
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Brush.linearGradient(listOf(Color(0xFF0B3D3B), Color(0xFF102C3B))), RoundedCornerShape(26.dp))
-                .border(1.dp, Aqua.copy(alpha = 0.45f), RoundedCornerShape(26.dp))
+                .background(Brush.linearGradient(listOf(Color(0xFFE4EFEC), Color(0xFFE4EFEC))), RoundedCornerShape(2.dp))
+                .border(1.dp, Aqua.copy(alpha = 0.45f), RoundedCornerShape(2.dp))
                 .padding(22.dp),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -431,7 +440,7 @@ private fun ProGate(language: AppLanguage, activity: Activity, billing: BillingM
                 OutlinedButton(
                     onClick = billing::restorePurchases,
                     modifier = Modifier.fillMaxWidth().height(50.dp),
-                    shape = RoundedCornerShape(15.dp),
+                    shape = RoundedCornerShape(2.dp),
                     border = BorderStroke(1.dp, HydroLine),
                 ) {
                     Text(if (language == AppLanguage.DE) "Käufe wiederherstellen" else "Restore purchases")
@@ -477,7 +486,7 @@ private fun ProStrip(language: AppLanguage, price: String?, onClick: () -> Unit)
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         color = Aqua.copy(alpha = 0.10f),
-        shape = RoundedCornerShape(19.dp),
+        shape = RoundedCornerShape(2.dp),
         border = BorderStroke(1.dp, Aqua.copy(alpha = 0.30f)),
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -508,7 +517,7 @@ private fun InvalidCard(language: AppLanguage) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.error.copy(alpha = 0.10f),
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(2.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.30f)),
     ) {
         Text(
