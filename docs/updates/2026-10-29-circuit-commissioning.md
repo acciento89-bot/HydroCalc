@@ -1,0 +1,9 @@
+# Circuit commissioning visits — 29 October 2026
+
+Existing free circuit projects can now record measured commissioning visits. Each visit freezes circuit identity, name/group, heat power, design spread and exact target l/h, with model revision1, time, user tolerance and measurement-source/work note. Blank measured flow remains unmeasured; actual zero is retained and produces a real −100% deviation from a positive target. Current plans and the existing baseline remain editable independently. Removing a current circuit never removes it from a past visit.
+
+Visit history and DE/EN project worksheets display frozen targets, actual readings, deviations and missing counts. Targets still use the existing heating-water factor1.163 Wh/(l·K). This is a project comparison, not pump sizing or a hydraulic-balancing certificate. All prior calculators and paid gates remain intact.
+
+The existing projects.json location is retained. Optional visits are absent in old records; bare-array and schema1 projects still load without fabricated visits. New writes use schema2 so old strict readers cannot silently discard history. Current archive validation checks visit identities, snapshot inputs/flow, model revision, dates, tolerance and readings; corrupt/newer files remain protected from replacement.
+
+A behavioral snapshot-retention test first failed against the old code. The entire original plus extended pure Swift suite passes, covering missing/zero, frozen targets after plan edits/removal, tolerance boundaries, malformed/foreign/duplicate inputs, cold reload, old archives, unknown visit models and protected bytes, and DE/EN reports. Changed SwiftUI syntax parses; DE/EN strings lint. Full iOS UI typechecking/build and runtime/device QA are still pending. Exact commands/logs are in central CalcAudit.

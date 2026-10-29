@@ -74,6 +74,7 @@ struct ProjectDetailView: View {
     @State private var editing: HydroCircuit?
     @State private var deleting: HydroCircuit?
     @State private var capture = false
+    @State private var commissioning = false
     @State private var renaming = false
     @State private var name = ""
 
@@ -100,6 +101,14 @@ struct ProjectDetailView: View {
                             totals(project.groupTotals[group]!)
                         }
                     }
+                }
+            }
+            Section("commissioning.history") {
+                Button("commissioning.new") { commissioning = true }
+                    .disabled(project.circuits.isEmpty || project.circuits.contains { $0.flowLh == nil })
+                if (project.commissioningVisits ?? []).isEmpty { Text("commissioning.none").foregroundStyle(.secondary) }
+                ForEach(project.commissioningVisits ?? []) { visit in
+                    DisclosureGroup(visit.date.formatted(date: .abbreviated, time: .shortened)) { CommissioningVisitValues(visit: visit) }
                 }
             }
             Section("projects.circuits") {
@@ -133,6 +142,13 @@ struct ProjectDetailView: View {
                 ShareLink(item: project.worksheet(language: locale.language.languageCode?.identifier ?? "en")) {
                     Label("projects.share", systemImage: "square.and.arrow.up")
                 }
+            }
+        }
+        .sheet(isPresented: $commissioning) {
+            CircuitCommissioningEditor(circuits: project.circuits) { visit in
+                var proposed = project
+                do { try proposed.recordCommissioning(visit) } catch { return false }
+                return save(proposed)
             }
         }
         .sheet(item: $editing) { circuit in
@@ -250,5 +266,78 @@ private struct CircuitEditor: View {
                 Text(unit).foregroundStyle(.secondary)
             }
         }.padding(.vertical, 4)
+    }
+}
+
+private struct CommissioningVisitValues: View {
+    let visit: HydroCommissioningVisit
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if !visit.note.isEmpty { Text(visit.note) }
+            Text("commissioning.frozen").font(.footnote).foregroundStyle(.secondary)
+            LabeledContent("commissioning.tolerance", value: visit.tolerancePercent.formatted() + " %")
+            LabeledContent("commissioning.missing", value: "\(visit.missingCount)")
+            ForEach(visit.rows) { row in
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(row.target.name).font(.headline)
+                    if !row.target.group.isEmpty { Text(row.target.group).font(.caption) }
+                    Text("\(row.target.powerKW.formatted()) kW · ΔT \(row.target.deltaT.formatted()) K")
+                    LabeledContent("commissioning.target", value: row.targetFlowLh.formatted(.number.precision(.fractionLength(0...2))) + " l/h")
+                    if let measured = row.measuredFlowLh, let deviation = row.deviationPercent {
+                        LabeledContent("commissioning.measured", value: measured.formatted() + " l/h")
+                        LabeledContent("commissioning.deviation", value: deviation.formatted(.number.precision(.fractionLength(0...2))) + " %")
+                        Text(row.isWithinTolerance(visit.tolerancePercent) == true ? LocalizedStringKey("commissioning.within") : LocalizedStringKey("commissioning.outside"))
+                    } else { Text("commissioning.unmeasured").foregroundStyle(.secondary) }
+                }
+            }
+        }.padding(.vertical, 8)
+    }
+}
+
+private struct CircuitCommissioningEditor: View {
+    let circuits: [HydroCircuit]
+    let save: (HydroCommissioningVisit) -> Bool
+    @Environment(\.dismiss) private var dismiss
+    @State private var measured: [UUID: String] = [:]
+    @State private var tolerance = "10"
+    @State private var note = ""
+    @State private var failed = false
+    private var visit: HydroCommissioningVisit? {
+        var flows: [UUID: Double] = [:]
+        for circuit in circuits {
+            let text = measured[circuit.id, default: ""].trimmingCharacters(in: .whitespacesAndNewlines)
+            if !text.isEmpty { guard let value = text.hydroDouble else { return nil }; flows[circuit.id] = value }
+        }
+        guard let toleranceValue = tolerance.hydroDouble else { return nil }
+        return try? HydroCommissioningVisit(circuits: circuits, measuredFlows: flows, tolerancePercent: toleranceValue, note: note)
+    }
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section { Text("commissioning.frozen"); Text("commissioning.blank") }
+                Section("commissioning.readings") {
+                    ForEach(circuits) { circuit in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(circuit.name).font(.headline)
+                            Text((circuit.flowLh?.formatted(.number.precision(.fractionLength(0...2))) ?? "—") + " l/h").font(.caption)
+                            TextField("commissioning.measured", text: Binding(get: { measured[circuit.id, default: ""] }, set: { measured[circuit.id] = $0 }))
+                                .keyboardType(.decimalPad).accessibilityLabel(Text(circuit.name) + Text(" · ") + Text("commissioning.measured"))
+                        }
+                    }
+                }
+                Section {
+                    TextField("commissioning.tolerance", text: $tolerance).keyboardType(.decimalPad)
+                    TextField("commissioning.note", text: $note, axis: .vertical)
+                    Text("commissioning.limits").font(.footnote)
+                    if visit == nil { Text("commissioning.invalid").foregroundStyle(.red) }
+                }
+            }.navigationTitle("commissioning.new").scrollDismissesKeyboard(.interactively)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) { Button("common.cancel") { dismiss() } }
+                    ToolbarItem(placement: .confirmationAction) { Button("projects.save") { if let visit, save(visit) { dismiss() } else { failed = true } }.disabled(visit == nil) }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("common.done") { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } }
+                }
+                .alert("projects.error", isPresented: $failed) { Button("common.done") {} } message: { Text("projects.saveError") }
+        }
     }
 }

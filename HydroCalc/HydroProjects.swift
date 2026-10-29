@@ -39,11 +39,59 @@ struct HydroBaseline: Codable, Equatable {
     var totals: HydroTotals { HydroTotals(circuits: circuits) }
 }
 
+enum HydroCommissioningError: Error { case invalidVisit }
+
+struct HydroCommissioningRow: Codable, Equatable, Identifiable {
+    let target: HydroCircuit
+    let targetFlowLh: Double
+    let measuredFlowLh: Double?
+    var id: UUID { target.id }
+    init(target: HydroCircuit, measuredFlowLh: Double?) throws {
+        guard let flow = target.flowLh else { throw HydroCommissioningError.invalidVisit }
+        self.target = target; targetFlowLh = flow; self.measuredFlowLh = measuredFlowLh
+        guard isValid else { throw HydroCommissioningError.invalidVisit }
+    }
+    var deviationPercent: Double? {
+        guard let measuredFlowLh, targetFlowLh > 0 else { return nil }
+        let value = (measuredFlowLh - targetFlowLh) / targetFlowLh * 100
+        return value.isFinite ? value : nil
+    }
+    func isWithinTolerance(_ tolerance: Double) -> Bool? { deviationPercent.map { abs($0) <= tolerance + 1e-9 } }
+    var isValid: Bool {
+        !target.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        targetFlowLh.isFinite && targetFlowLh > 0 && target.flowLh == targetFlowLh &&
+        (measuredFlowLh.map { $0.isFinite && $0 >= 0 && deviationPercent != nil } ?? true)
+    }
+}
+
+struct HydroCommissioningVisit: Codable, Equatable, Identifiable {
+    let id: UUID
+    let date: Date
+    let modelRevision: Int
+    let tolerancePercent: Double
+    let note: String
+    let rows: [HydroCommissioningRow]
+    init(circuits: [HydroCircuit], measuredFlows: [UUID: Double], tolerancePercent: Double,
+         note: String, date: Date = Date()) throws {
+        guard Set(measuredFlows.keys).isSubset(of: Set(circuits.map(\.id))) else { throw HydroCommissioningError.invalidVisit }
+        id = UUID(); self.date = date; modelRevision = 1; self.tolerancePercent = tolerancePercent; self.note = note
+        rows = try circuits.map { try HydroCommissioningRow(target: $0, measuredFlowLh: measuredFlows[$0.id]) }
+        guard isValid else { throw HydroCommissioningError.invalidVisit }
+    }
+    var missingCount: Int { rows.filter { $0.measuredFlowLh == nil }.count }
+    var isValid: Bool {
+        modelRevision == 1 && date.timeIntervalSince1970.isFinite && tolerancePercent.isFinite &&
+        (0...100).contains(tolerancePercent) && !rows.isEmpty && rows.allSatisfy(\.isValid) &&
+        Set(rows.map(\.id)).count == rows.count
+    }
+}
+
 struct HydroProject: Codable, Equatable, Identifiable {
     var id = UUID()
     var name: String
     var circuits: [HydroCircuit] = []
     var baseline: HydroBaseline?
+    var commissioningVisits: [HydroCommissioningVisit]? = nil
     var totals: HydroTotals { HydroTotals(circuits: circuits) }
     var groupTotals: [String: HydroTotals] {
         Dictionary(grouping: circuits, by: { $0.group.trimmingCharacters(in: .whitespacesAndNewlines) })
@@ -51,6 +99,10 @@ struct HydroProject: Codable, Equatable, Identifiable {
     }
 
     mutating func captureBaseline() { baseline = HydroBaseline(circuits: circuits) }
+    mutating func recordCommissioning(_ visit: HydroCommissioningVisit) throws {
+        guard visit.isValid, !(commissioningVisits ?? []).contains(where: { $0.id == visit.id }) else { throw HydroCommissioningError.invalidVisit }
+        commissioningVisits = (commissioningVisits ?? []) + [visit]
+    }
 
     func worksheet(language: String) -> String {
         let de = language.hasPrefix("de")
@@ -78,9 +130,21 @@ struct HydroProject: Codable, Equatable, Identifiable {
             lines += rows(baseline.circuits)
             lines += [total(baseline.totals), "Δ: \(number(totals.powerKW - baseline.totals.powerKW)) kW; \(number(totals.flowLh - baseline.totals.flowLh)) l/h"]
         }
+        for visit in commissioningVisits ?? [] {
+            lines += ["", de ? "Inbetriebnahme · eingefrorene Sollwerte" : "Commissioning visit · frozen targets",
+                      ISO8601DateFormatter().string(from: visit.date), visit.note,
+                      "\(de ? "Projekttoleranz" : "Project tolerance"): \(number(visit.tolerancePercent)) %; \(de ? "Messpunkte offen" : "Unmeasured"): \(visit.missingCount)",
+                      "\(de ? "Rechenmodell" : "Model revision"): \(visit.modelRevision) · 1.163 Wh/(l·K)"]
+            for row in visit.rows {
+                let measured = row.measuredFlowLh.map { "\(number($0)) l/h" } ?? (de ? "Nicht gemessen" : "Unmeasured")
+                let deviation = row.deviationPercent.map { "\(number($0)) %" } ?? "—"
+                lines += ["\(row.target.name) [\(row.target.group)] · \(number(row.target.powerKW)) kW; ΔT \(number(row.target.deltaT)) K",
+                          "\(de ? "Soll / Ist / Abweichung" : "Target / Measured / Deviation"): \(number(row.targetFlowLh)) l/h / \(measured) / \(deviation)"]
+            }
+        }
         lines += ["", de
-            ? "Heizungswasser: Näherung 1.163 Wh/(l·K), Volumenstrom = kW × 1000 / (1.163 × ΔT). Stoffwerte für Glykol/andere Medien gesondert prüfen. Rechnerische Sollwerte, keine Messwerte. Keine Pumpenauslegung oder Bestätigung eines hydraulischen Abgleichs."
-            : "Heating water: approximation 1.163 Wh/(l·K), flow = kW × 1000 / (1.163 × ΔT). Check fluid properties separately for glycol/other fluids. Calculated target values, not measurements. No pump sizing or certification of hydraulic balancing."]
+            ? "Heizungswasser: Näherung 1.163 Wh/(l·K), Volumenstrom = kW × 1000 / (1.163 × ΔT). Stoffwerte für Glykol/andere Medien gesondert prüfen. Vorschlag und Ausgangsstand sind rechnerische Sollwerte. Messungen werden in den Inbetriebnahmebesuchen separat erfasst. Keine Pumpenauslegung oder Bestätigung eines hydraulischen Abgleichs."
+            : "Heating water: approximation 1.163 Wh/(l·K), flow = kW × 1000 / (1.163 × ΔT). Check fluid properties separately for glycol/other fluids. Proposal and baseline are calculated targets; measurements are entered separately in commissioning visits. No pump sizing or certification of hydraulic balancing."]
         return lines.joined(separator: "\n")
     }
 }
@@ -88,7 +152,7 @@ struct HydroProject: Codable, Equatable, Identifiable {
 struct HydroProjectStorage {
     let url: URL
     private struct Envelope: Codable {
-        var schemaVersion = 1
+        var schemaVersion = 2
         var projects: [HydroProject]
     }
     enum StorageError: Error { case unsupportedVersion, invalidArchive }
@@ -104,7 +168,7 @@ struct HydroProjectStorage {
             return projects
         }
         let envelope = try decoder.decode(Envelope.self, from: data)
-        guard envelope.schemaVersion == 1 else { throw StorageError.unsupportedVersion }
+        guard (1...2).contains(envelope.schemaVersion) else { throw StorageError.unsupportedVersion }
         try validate(envelope.projects)
         return envelope.projects
     }
@@ -113,6 +177,8 @@ struct HydroProjectStorage {
         guard Set(projects.map(\.id)).count == projects.count else { throw StorageError.invalidArchive }
         for project in projects {
             guard !project.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw StorageError.invalidArchive }
+            let visits = project.commissioningVisits ?? []
+            guard visits.allSatisfy(\.isValid), Set(visits.map(\.id)).count == visits.count else { throw StorageError.invalidArchive }
             for circuits in [project.circuits, project.baseline?.circuits].compactMap({ $0 }) {
                 guard Set(circuits.map(\.id)).count == circuits.count,
                       circuits.allSatisfy({ !$0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else { throw StorageError.invalidArchive }

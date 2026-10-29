@@ -118,3 +118,37 @@
 "projects.error" = "Project storage";
 "projects.retry" = "Retry loading";
 "common.cancel" = "Cancel";
+
+"commissioning.history" = "Commissioning visits";
+
+"commissioning.new" = "Record measurement visit";
+
+"commissioning.none" = "No measurement visit recorded.";
+
+"commissioning.frozen" = "Targets and inputs are frozen when saved. Later design changes do not alter this visit.";
+
+"commissioning.tolerance" = "Project tolerance (%)";
+
+"commissioning.missing" = "Unmeasured points";
+
+"commissioning.target" = "Frozen target";
+
+"commissioning.measured" = "Measured flow (l/h)";
+
+"commissioning.deviation" = "Deviation";
+
+"commissioning.within" = "Within project tolerance";
+
+"commissioning.outside" = "Outside project tolerance";
+
+"commissioning.unmeasured" = "Unmeasured";
+
+"commissioning.blank" = "Blank = unmeasured. 0 = an actual zero reading.";
+
+"commissioning.readings" = "Readings by circuit";
+
+"commissioning.note" = "Instrument / source / work";
+
+"commissioning.limits" = "Project tolerance 0–100%. Water approximation 1.163 Wh/(l·K). No pump sizing or balancing certificate.";
+
+"commissioning.invalid" = "Use valid target circuits, readings ≥ 0 or blank, and project tolerance 0–100%.";

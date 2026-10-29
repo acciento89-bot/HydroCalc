@@ -118,3 +118,37 @@
 "projects.error" = "Projektspeicher";
 "projects.retry" = "Erneut laden";
 "common.cancel" = "Abbrechen";
+
+"commissioning.history" = "Inbetriebnahmebesuche";
+
+"commissioning.new" = "Messbesuch erfassen";
+
+"commissioning.none" = "Noch kein Messbesuch gespeichert.";
+
+"commissioning.frozen" = "Sollwerte und Eingaben werden beim Speichern eingefroren. Spätere Planänderungen verändern diesen Besuch nicht.";
+
+"commissioning.tolerance" = "Projekttoleranz (%)";
+
+"commissioning.missing" = "Messpunkte offen";
+
+"commissioning.target" = "Eingefrorener Sollwert";
+
+"commissioning.measured" = "Gemessener Volumenstrom (l/h)";
+
+"commissioning.deviation" = "Abweichung";
+
+"commissioning.within" = "Innerhalb Projekttoleranz";
+
+"commissioning.outside" = "Außerhalb Projekttoleranz";
+
+"commissioning.unmeasured" = "Nicht gemessen";
+
+"commissioning.blank" = "Leer = nicht gemessen. 0 = tatsächlich gemessener Nullwert.";
+
+"commissioning.readings" = "Messwerte je Heizkreis";
+
+"commissioning.note" = "Messgerät / Quelle / Tätigkeit";
+
+"commissioning.limits" = "Projekttoleranz 0–100 %. Wasser-Näherung 1,163 Wh/(l·K). Keine Pumpenauslegung oder Abgleichbescheinigung.";
+
+"commissioning.invalid" = "Gültige Sollkreise, Messwerte ≥ 0 oder leer und Projekttoleranz 0–100 % verwenden.";
